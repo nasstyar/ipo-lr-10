@@ -1,3 +1,6 @@
+class RectCorrectError(Exception):
+  pass
+
 def isCorrectRect(coords):
   
   bottom_left, top_right = coords
@@ -47,10 +50,74 @@ def intersectionAreaRect(rect1, rect2):
   
   return width * height
 
-print(intersectionAreaRect([(-3, 1), (9, 10)], [(-7, 0), (13, 12)]))  # Вернет некоторое положительное число
-print(intersectionAreaRect([(1, 1), (2, 2)], [(3, 0), (13, 1)]))  # Вернет 0
+def intersectionAreaMultiRect(rectangles):
 
+  for rect in rectangles:
+    if not isCorrectRect(rect):
+      raise RectCorrectError("Прямоугольник некорректный")
+  
+  if len(rectangles) == 0:
+    return 0
+  
+  if len(rectangles) == 1:
+    x1, y1 = rectangles[0][0]
+    x2, y2 = rectangles[0][1]
+    return (x2 - x1) * (y2 - y1)
+  
+  x_coords = set()
+  y_coords = set()
+  
+  for rect in rectangles:
+    x1, y1 = rect[0]
+    x2, y2 = rect[1]
+    x_coords.add(x1)
+    x_coords.add(x2)
+    y_coords.add(y1)
+    y_coords.add(y2)
+  
+  x_coords = sorted(x_coords)
+  y_coords = sorted(y_coords)
+  
+  total_area = 0
+  
+  for i in range(len(x_coords) - 1):
+    for j in range(len(y_coords) - 1):
+      x_left = x_coords[i]
+      x_right = x_coords[i + 1]
+      y_bottom = y_coords[j]
+      y_top = y_coords[j + 1]
+      
+      inside_all = True
+      for rect in rectangles:
+        x1, y1 = rect[0]
+        x2, y2 = rect[1]
+        
+        if not (x_left >= x1 and x_right <= x2 and y_bottom >= y1 and y_top <= y2):
+          inside_all = False
+          break
+      
+      if inside_all:
+        cell_area = (x_right - x_left) * (y_top - y_bottom)
+        total_area += cell_area
+  
+  return total_area
+
+
+rectangles = [
+    [(-3, 1), (9, 10)],
+    [(-7, 0), (13, 12)],
+    [(0, 0), (5, 5)],
+    [(2, 2), (7, 7)]
+]
+result = intersectionAreaMultiRect(rectangles)
+print(f"Уникальная площадь пересечения: {result}")
+
+# Некорректный прямоугольник
+incorrect_rectangles = [
+    [(-3, 1), (9, 10)],
+    [(3, 17), (13, 1)]  # Некорректный прямоугольник
+]
 try:
-  print(intersectionAreaRect([(1, 1), (2, 2)], [(3, 17), (13, 1)]))  # Вызовет ошибку
-except ValueError as e:
+  intersectionAreaMultiRect(incorrect_rectangles)  # Вызовет ошибку
+except RectCorrectError as e:
   print(f"Ошибка: {e}")
