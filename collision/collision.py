@@ -101,23 +101,3 @@ def intersectionAreaMultiRect(rectangles):
         total_area += cell_area
   
   return total_area
-
-
-rectangles = [
-    [(-3, 1), (9, 10)],
-    [(-7, 0), (13, 12)],
-    [(0, 0), (5, 5)],
-    [(2, 2), (7, 7)]
-]
-result = intersectionAreaMultiRect(rectangles)
-print(f"Уникальная площадь пересечения: {result}")
-
-# Некорректный прямоугольник
-incorrect_rectangles = [
-    [(-3, 1), (9, 10)],
-    [(3, 17), (13, 1)]  # Некорректный прямоугольник
-]
-try:
-  intersectionAreaMultiRect(incorrect_rectangles)  # Вызовет ошибку
-except RectCorrectError as e:
-  print(f"Ошибка: {e}")
